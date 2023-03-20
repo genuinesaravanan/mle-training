@@ -19,6 +19,7 @@ def fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
     housing_tgz.extractall(path=housing_path)
     housing_tgz.close()
 
+
 fetch_housing_data()
 
 import pandas as pd
@@ -27,7 +28,9 @@ def load_housing_data(housing_path=HOUSING_PATH):
     csv_path = os.path.join(housing_path, "housing.csv")
     return pd.read_csv(csv_path)
 
+
 housing = load_housing_data()
+
 
 from sklearn.model_selection import train_test_split
 
@@ -176,6 +179,7 @@ X_test_prepared["population_per_household"]=X_test_prepared["population"]/X_test
 
 X_test_cat = X_test[['ocean_proximity']]
 X_test_prepared = X_test_prepared.join(pd.get_dummies(X_test_cat, drop_first=True))
+
 final_predictions = final_model.predict(X_test_prepared)
 final_mse = mean_squared_error(y_test, final_predictions)
 final_rmse = np.sqrt(final_mse)
