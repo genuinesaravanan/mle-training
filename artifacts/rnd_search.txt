@@ -1,0 +1,10 @@
+RMSE=49175.920081996424, Parameters={'max_features': 7, 'n_estimators': 180}
+RMSE=50979.31309987477, Parameters={'max_features': 5, 'n_estimators': 15}
+RMSE=50615.31290608045, Parameters={'max_features': 3, 'n_estimators': 72}
+RMSE=50356.50620069724, Parameters={'max_features': 5, 'n_estimators': 21}
+RMSE=49356.66118397995, Parameters={'max_features': 7, 'n_estimators': 122}
+RMSE=50590.24171016077, Parameters={'max_features': 3, 'n_estimators': 75}
+RMSE=50439.661883382774, Parameters={'max_features': 3, 'n_estimators': 88}
+RMSE=49498.226752242146, Parameters={'max_features': 5, 'n_estimators': 100}
+RMSE=50262.550516472504, Parameters={'max_features': 3, 'n_estimators': 150}
+RMSE=63055.85950859079, Parameters={'max_features': 5, 'n_estimators': 2}
