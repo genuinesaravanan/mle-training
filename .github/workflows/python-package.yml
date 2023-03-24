@@ -5,10 +5,7 @@ name: Python package
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+   
 jobs:
   build:
 
@@ -26,9 +23,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        $CONDA/bin/conda env update --file linux_cpu_py37.yml --name base
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
