@@ -5,6 +5,7 @@ name: Python package
 
 on:
   push:
+    branches: [ "fix/issue#7/For_Production" ]
    
 jobs:
   build:
