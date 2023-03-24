@@ -1,5 +1,6 @@
 alabaster @ file:///home/ktietz/src/ci/alabaster_1611921544520/work
 appdirs==1.4.4
+attrs @ file:///croot/attrs_1668696182826/work
 Babel @ file:///croot/babel_1671781930836/work
 Bottleneck @ file:///opt/conda/conda-bld/bottleneck_1657175564434/work
 brotlipy==0.7.0
@@ -15,6 +16,7 @@ flake8 @ file:///croot/flake8_1674581792275/work
 fonttools==4.25.0
 idna @ file:///croot/idna_1666125576474/work
 imagesize @ file:///opt/conda/conda-bld/imagesize_1657179498843/work
+iniconfig @ file:///home/linux1/recipes/ci/iniconfig_1610983019677/work
 Jinja2 @ file:///croot/jinja2_1666908132255/work
 joblib @ file:///croot/joblib_1666298844297/work
 kiwisolver @ file:///croot/kiwisolver_1672387140495/work
@@ -31,8 +33,10 @@ numpydoc @ file:///croot/numpydoc_1668085905352/work
 packaging @ file:///croot/packaging_1678965309396/work
 pandas==1.5.3
 Pillow==9.4.0
+pluggy @ file:///tmp/build/80754af9/pluggy_1648024709248/work
 ply==3.11
 pooch @ file:///tmp/build/80754af9/pooch_1623324770023/work
+py @ file:///opt/conda/conda-bld/py_1644396412707/work
 pycodestyle @ file:///croot/pycodestyle_1674267221883/work
 pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
 pyflakes @ file:///croot/pyflakes_1674165128613/work
@@ -41,6 +45,7 @@ pyOpenSSL @ file:///croot/pyopenssl_1677607685877/work
 pyparsing @ file:///opt/conda/conda-bld/pyparsing_1661452539315/work
 PyQt5-sip==12.11.0
 PySocks @ file:///home/builder/ci_310/pysocks_1640793678128/work
+pytest==7.1.2
 python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
 pytz @ file:///croot/pytz_1671697431263/work
 requests @ file:///croot/requests_1678709721434/work
@@ -59,5 +64,6 @@ sphinxcontrib-qthelp @ file:///home/ktietz/src/ci/sphinxcontrib-qthelp_161192105
 sphinxcontrib-serializinghtml @ file:///tmp/build/80754af9/sphinxcontrib-serializinghtml_1624451540180/work
 threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
 toml @ file:///tmp/build/80754af9/toml_1616166611790/work
+tomli @ file:///opt/conda/conda-bld/tomli_1657175507142/work
 tornado @ file:///opt/conda/conda-bld/tornado_1662061693373/work
 urllib3 @ file:///croot/urllib3_1673575502006/work
