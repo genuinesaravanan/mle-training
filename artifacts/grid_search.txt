@@ -1,0 +1,18 @@
+RMSE=64062.72861884957, Parameters={'max_features': 2, 'n_estimators': 3}
+RMSE=55479.21774655382, Parameters={'max_features': 2, 'n_estimators': 10}
+RMSE=52966.124941638336, Parameters={'max_features': 2, 'n_estimators': 30}
+RMSE=58363.665560496614, Parameters={'max_features': 4, 'n_estimators': 3}
+RMSE=52396.19523340483, Parameters={'max_features': 4, 'n_estimators': 10}
+RMSE=50215.10958041685, Parameters={'max_features': 4, 'n_estimators': 30}
+RMSE=59020.00126496427, Parameters={'max_features': 6, 'n_estimators': 3}
+RMSE=52006.13620481499, Parameters={'max_features': 6, 'n_estimators': 10}
+RMSE=50051.59528363614, Parameters={'max_features': 6, 'n_estimators': 30}
+RMSE=58910.833233016325, Parameters={'max_features': 8, 'n_estimators': 3}
+RMSE=52362.774093865475, Parameters={'max_features': 8, 'n_estimators': 10}
+RMSE=50273.65306916561, Parameters={'max_features': 8, 'n_estimators': 30}
+RMSE=63087.194157215, Parameters={'bootstrap': False, 'max_features': 2, 'n_estimators': 3}
+RMSE=54773.96059466593, Parameters={'bootstrap': False, 'max_features': 2, 'n_estimators': 10}
+RMSE=60379.84359138394, Parameters={'bootstrap': False, 'max_features': 3, 'n_estimators': 3}
+RMSE=51887.898627977534, Parameters={'bootstrap': False, 'max_features': 3, 'n_estimators': 10}
+RMSE=57719.276994840606, Parameters={'bootstrap': False, 'max_features': 4, 'n_estimators': 3}
+RMSE=51419.866104752255, Parameters={'bootstrap': False, 'max_features': 4, 'n_estimators': 10}
