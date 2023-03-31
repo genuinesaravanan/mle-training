@@ -22,7 +22,8 @@ def configure_logger(
 
     The individual arguments of `log_file`, `console`, `log_level` will overwrite the ones in cfg.
 
-    Parameters:
+    Parameters
+    ----------
 
             logger:
                     Predefined logger object if present. If None a ew logger object will be created from root.
@@ -37,8 +38,10 @@ def configure_logger(
                     default - `"DEBUG"`
 
     Returns:
+    -------
     
     logging.Logger
+    
     """
     if not cfg:
         logging.config.dictConfig(LOGGING_DEFAULT_CONFIG)

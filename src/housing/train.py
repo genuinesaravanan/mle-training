@@ -6,6 +6,8 @@ import pickle
 import numpy as np
 import pandas as pd
 from scipy.stats import randint
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
@@ -15,6 +17,8 @@ from sklearn.model_selection import (
     StratifiedShuffleSplit,
     train_test_split,
 )
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeRegressor
 
 from logger_main import configure_logger
@@ -26,6 +30,7 @@ if __name__ == '__main__':
     # Use argparser to get the user command line input such as where to store data and pickle model
 
     parser = argparse.ArgumentParser()
+
     parser.add_argument('--dataset', dest="dataset", type=str, default='./data/raw/housing.csv',
                         help='Path to dataset')
     parser.add_argument('--model-output', dest="model_output", type=str, default='./artifacts',
@@ -38,7 +43,7 @@ if __name__ == '__main__':
                         help='toggle whether or not to write logs to the console')
     args = parser.parse_args()
 
-    # Based on the user input from the terminal set the file path and console output true/false
+    # Based on the user input from the terminal, set the file path and console output true/false
 
     if args.log_path is not False:
         log_file_path = os.path.join(args.log_path, 'log_file.log')
@@ -54,6 +59,7 @@ if __name__ == '__main__':
     configure_logger(logger=None, cfg=None, log_file=log_file_path, console=console_input, log_level=args.log_level)
 
     housing = pd.read_csv(args.dataset)
+
     train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)
 
     housing["income_cat"] = pd.cut(housing["median_income"],
@@ -64,50 +70,61 @@ if __name__ == '__main__':
     for train_index, test_index in split.split(housing, housing["income_cat"]):
         strat_train_set = housing.loc[train_index]
         strat_test_set = housing.loc[test_index]
-
-    def income_cat_proportions(data):
-        return data["income_cat"].value_counts() / len(data)
-    train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)
-
-    compare_props = pd.DataFrame({
-        "Overall": income_cat_proportions(housing),
-        "Stratified": income_cat_proportions(strat_test_set),
-        "Random": income_cat_proportions(test_set),
-    }).sort_index()
-
-    compare_props["Rand. %error"] = 100 * compare_props["Random"] / compare_props["Overall"] - 100
-    compare_props["Strat. %error"] = 100 * compare_props["Stratified"] / compare_props["Overall"] - 100
-
-    for set_ in (strat_train_set, strat_test_set):
-        set_.drop("income_cat", axis=1, inplace=True)
-
+    
+    # visualize the housing data using lat and long
+    
     housing = strat_train_set.copy()
     housing.plot(kind="scatter", x="longitude", y="latitude")
     housing.plot(kind="scatter", x="longitude", y="latitude", alpha=0.1)
-
+    # Correlation matrix for housing
     corr_matrix = housing.corr()
     corr_matrix["median_house_value"].sort_values(ascending=False)
-    housing["rooms_per_household"] = housing["total_rooms"] / housing["households"]
-    housing["bedrooms_per_room"] = housing["total_bedrooms"] / housing["total_rooms"]
-    housing["population_per_household"] = housing["population"] / housing["households"]
-
-    housing = strat_train_set.drop("median_house_value", axis=1)  # drop labels for training set
-    housing_labels = strat_train_set["median_house_value"].copy()
-
-    imputer = SimpleImputer(strategy="median")
-
+    # select the numerical only data
+    housing = strat_train_set.drop("median_house_value", axis=1)
     housing_num = housing.drop('ocean_proximity', axis=1)
+    
+    # custom transformer for the new features mentioned above
 
-    imputer.fit(housing_num)
-    X = imputer.transform(housing_num)
+    rooms_ix, bedrooms_ix, population_ix, households_ix = 3, 4, 5, 6
 
-    housing_tr = pd.DataFrame(X, columns=housing_num.columns, index=housing.index)
-    housing_tr["rooms_per_household"] = housing_tr["total_rooms"] / housing_tr["households"]
-    housing_tr["bedrooms_per_room"] = housing_tr["total_bedrooms"] / housing_tr["total_rooms"]
-    housing_tr["population_per_household"] = housing_tr["population"] / housing_tr["households"]
+    class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
+        def __init__(self, add_bedrooms_per_room=True):
+            self.add_bedrooms_per_room = add_bedrooms_per_room
 
-    housing_cat = housing[['ocean_proximity']]
-    housing_prepared = housing_tr.join(pd.get_dummies(housing_cat, drop_first=True))
+        def fit(self, X, y=None):
+            return self
+        
+        def transform(self, X, y=None):
+            rooms_per_household = X[:, rooms_ix] / X[:, households_ix]
+            population_per_household = X[:, population_ix] / X[:, households_ix]
+            bedrooms_per_room = X[:, bedrooms_ix] / X[:, rooms_ix]
+            return np.c_[X, rooms_per_household, population_per_household, bedrooms_per_room]
+    attr_adder = CombinedAttributesAdder()
+    housing_extra_attribs = attr_adder.transform(housing.values)    
+    housing_extra_attribs = pd.DataFrame(housing_extra_attribs,
+                                         columns=list(housing.columns) 
+                                         + ["rooms_per_household", "population_per_household", "bedrooms_per_room"],
+                                         index=housing.index)
+    # pipe line to impute,add new attribute and sclar transfromation
+
+    num_pipeline = Pipeline([('imputer', SimpleImputer(strategy="median")),
+                             ('attribs_adder', CombinedAttributesAdder()), 
+                             ('std_scaler', StandardScaler())])
+    
+    housing_num_tr = num_pipeline.fit_transform(housing_num)
+    # drop labels for training set
+    housing = strat_train_set.drop("median_house_value", axis=1)  
+    housing_labels = strat_train_set["median_house_value"].copy()
+    # column transformer to combine both num and cat columns
+    num_attribs = list(housing_num)
+    cat_attribs = ["ocean_proximity"]
+    full_pipeline = ColumnTransformer([("num", num_pipeline, num_attribs),
+                                       ("cat", OneHotEncoder(), cat_attribs),])
+           
+    # final test data and lables for training are
+
+    housing_prepared = full_pipeline.fit_transform(housing)
+    housing_labels = strat_train_set["median_house_value"].copy()
 
     lin_reg = LinearRegression()
     lin_reg.fit(housing_prepared, housing_labels)
@@ -115,25 +132,26 @@ if __name__ == '__main__':
     tree_reg = DecisionTreeRegressor(random_state=42)
     tree_reg.fit(housing_prepared, housing_labels)
 
+    # random forest regressor with randomized search method
     forest_reg = RandomForestRegressor(random_state=42)
     param_distribs = {'n_estimators': randint(low=1, high=200), 'max_features': randint(low=1, high=8)}
+
     rnd_search = RandomizedSearchCV(forest_reg, param_distributions=param_distribs,
                                     n_iter=10, cv=5, scoring='neg_mean_squared_error', random_state=42)
     rnd_search.fit(housing_prepared, housing_labels)
-    param_grid = [
-        # try 12 (3×4) combinations of hyperparameters
-        {'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]},
-        # then try 6 (2×3) combinations with bootstrap set as False
-        {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]}
-    ]
 
+    # random forest regressor with grid search method
+    param_grid = [{'n_estimators': [3, 10, 30], 'max_features': [2, 4, 6, 8]},
+                  {'bootstrap': [False], 'n_estimators': [3, 10], 'max_features': [2, 3, 4]}
+                  ]
     forest_reg = RandomForestRegressor(random_state=42)
-    # train across 5 folds, that's a total of (12+6)*5=90 rounds of training
+    
     grid_search = GridSearchCV(forest_reg, param_grid, cv=5, scoring='neg_mean_squared_error', return_train_score=True)
     grid_search.fit(housing_prepared, housing_labels)
 
     feature_importances = grid_search.best_estimator_.feature_importances_
-    sorted(zip(feature_importances, housing_prepared.columns), reverse=True)
+
+    sorted(feature_importances, reverse=True)
 
     # store the models in to the user defined/artifacts folder
 
@@ -146,7 +164,7 @@ if __name__ == '__main__':
         model_dir: directory path
             Directory where models will bestored
 
-        yields
+        returns
         ------
         Following models are generated,
             linear regression

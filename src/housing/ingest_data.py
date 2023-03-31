@@ -5,9 +5,8 @@ import tarfile
 import urllib.request
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
-
 from logger_main import configure_logger
+from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ def download_data(output_folder):
         The directory name where the data has to be stored (eg. /data/raw)
         by default it will be stored in  /data/raw directory
 
-    yields
+    returns
     ------
     Downloads the data from url and stores it in to the user defined/default 
     directory.
@@ -55,7 +54,7 @@ def split_data(data):
     test_size=0.2
     random_state=42
 
-    yields
+    returns
     ------
     This function splits the dataframe in to test.csv and val.csv and stores in data directory
 

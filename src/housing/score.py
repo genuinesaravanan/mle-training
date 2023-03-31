@@ -5,11 +5,10 @@ import pickle
 
 import numpy as np
 import pandas as pd
+from logger_main import configure_logger
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import StratifiedShuffleSplit, train_test_split
-
-from logger_main import configure_logger
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +111,7 @@ if __name__ == '__main__':
         score_dir : str
             The directory where the scores files will be stored
 
-        yields
+        returns
         ------
 
         This function reads four models (linear regression, tree regression, random search CV and grid searchCV )
